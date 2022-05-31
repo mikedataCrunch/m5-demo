@@ -8,6 +8,11 @@ In this repository, we demonstrate the fundamental ideas and approaches used in 
 
 In M5, challengers from all over the world competed in building time series forecasting models for both accuracy and uncertainty prediction tasks specific to forecasting Walmart stores sales (event sponsor) across different product categories.
 
+## Dataset
+
+Dataset used here can be downloaded from [`Kaggle`](https://www.kaggle.com/c/m5-forecasting-accuracy). After download, save the `.csv` files into a directory named: `data/raw` within the cloned `m5-demo` repository. 
+
+Alternatively, you can also find the data in this [`google drive link`](https://drive.google.com/drive/folders/1D6EWdVSaOtrP1LEFh1REjI3vej6iUS_4). 
 
 
 ## Notebooks:
@@ -18,17 +23,24 @@ The repository contains the following notebooks:
 * `sample_entry.ipynb` - shows a pipeline for an entry to the M5 competition. The notebook illustrates the machine learning approach--that is, tuning a LightGBM model in terms of `lookback` window, the use of exogenous variables, and an implementation of either a direct forecasting or regressor chain model training method.
 
 
-## Mini-competition Structure
+## Other Files:
+* `utils.py` - which contains functions that are useful for the method employed in `sample_entry.ipynb`
+* `PATHS.py` - which contains file paths used in the notebooks.
 
-The repository is designed to facilitate a mini competition for M5. The following directories lends for the uses described below:
 
-1. `README.md` - that briefly describes the competition, and data sources.
-2. `Leaderboards Notebook` - each competition subdirectory provided with a leaderboards notebook to facilitate performance comparison.
-2. `Entries` - this directory may contain the following:
-    * `README.md` - (required) to provide a brief description of the entry as well as details on how to navigate through the files provided.
-    * `Notebook` - (required) 1 or more notebook that supports the reported WRMSSE scores in the leaderboards section of the competition.
-    * `trained_models` - (not required) included in .gitignore, this folder contains re-trained models on best paramters.
-    * `predictions` - (not required) included in .gitignore, this folder contains the resulting predictions. 
-    * `tuning` - (not required) included in .gitignore, this folder contains files used in tuning. Such as `.db` files for optuna experiments
-    * `utils.py` (required) which contains functions that are useful for the specific competition.
-    * `PATHS.py` (not required) which contains file paths used in the Notebooks.
+## M5 Mechanics
+
+### Metrics and Evaluation : *Begin with the end in mind*
+As with the original M5 competition, the objective is to minimize the forecasting error--measured by the Weighted Root Mean-Squared Scaled Error (RMSSE). This metric scales the usual root mean-squared error and aggregates the forecasting error of all the 42,840 forecasts (1 per series) in a weighted manner. These weights are provided by the `M5 Competition` and are based on the Dollar amount of sales for each of the 42,840 series. *Care must be taken into account in evaluating the results due to differences in `weights_evaluation.csv` and `weights_validation.csv`--differences are due to live updating of the proportion dollar amount of sales in the days that followed*. The former SHOULD be used in evaluating the final (entry) forecasts' WRMSSE while the latter for tuning the model--for entries that use WRMSSE as a tuning objective (Accuracy competition).
+
+WRMSEE formula:
+
+
+![equation](https://latex.codecogs.com/png.image?%5Cdpi%7B80%7D%20%5Cbg_white%20%5Cinline%20%5Ctext%7BWRMSSE%7D%20=%20%5CSigma_%7Bi=1%7D%5E%7B42,840%7D%20w_i%20*%20%5Ctext%7BRMSSE%7D%20)
+          
+*Honor Code: Unlike the original M5 competition, the evaluation set (last 28-day actual data) is already made available to entrants--mainly because M5 is already finished. While it is tempting to fit forecasting performance to the actual evaluation set, DO NOT, as this defeats the purpose of the competition.*
+
+## References
+For more information on the competition mechanics see: https://github.com/Mcompetitions/M5-methods/blob/master/M5-Competitors-Guide.pdf
+
+Additionally, winningest methods for M5 are dicussed in the same repository: https://github.com/Mcompetitions/M5-methods
